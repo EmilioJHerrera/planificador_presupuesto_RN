@@ -1,7 +1,11 @@
-import React from "react";
+import React, {useState} from "react";
 import { StyleSheet, Text, View, TextInput, Pressable } from "react-native";
 
-const NuevoPresupuesto = () => {
+import globalStyles from "../styles";
+
+const NuevoPresupuesto = ({presupuesto,setPresupuesto,handlePresupuesto}) => {
+
+
     return ( 
         <View style={styles.container}>
             <Text style={styles.label}>Presupuesto a gastar</Text>
@@ -9,9 +13,13 @@ const NuevoPresupuesto = () => {
             <TextInput
             keyboardType="numeric" 
             placeholder="Agrega presupuesto: Ej. 300"
-            style={styles.input}/>
+            style={styles.input}
+            value={presupuesto.toString()}
+            onChangeText={setPresupuesto}/>
 
-            <Pressable style={styles.buttom}>
+            <Pressable style={styles.buttom}
+            onPress={() => handlePresupuesto( presupuesto)}
+            >
                 <Text style={styles.text_button}>Agregar</Text>
             </Pressable>
 
@@ -21,21 +29,7 @@ const NuevoPresupuesto = () => {
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor: '#fff',
-        marginHorizontal: 20,
-      
-        borderRadius: 10,
-        paddingVertical: 30,
-        transform: [{ translateY: 50 }],
-        //https://ethercreative.github.io/react-native-shadow-generator/
-        shadowColor: "#000",
-        shadowOffset: {
-	    width: 0,
-	    height: 4,
-        },
-        shadowOpacity: 0.30,
-        shadowRadius: 4.41,
-        elevation: 8,
+      ...globalStyles.container,
     },
     label:{
         textAlign: 'center',
