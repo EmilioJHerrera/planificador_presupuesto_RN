@@ -30,6 +30,8 @@ const NuevoPresupuesto = ({presupuesto,setPresupuesto,handlePresupuesto}) => {
 const styles = StyleSheet.create({
     container:{
       ...globalStyles.container,
+      marginTop: '40%',
+      marginBottom: '90%',
     },
     label:{
         textAlign: 'center',
@@ -43,6 +45,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         borderRadius: 10,
         marginHorizontal: 30,
+        
     },
     buttom:{
         backgroundColor: '#1048a1',

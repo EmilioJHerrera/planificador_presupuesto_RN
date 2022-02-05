@@ -10,7 +10,8 @@ export const formatearNumero = (numero) => {
 
 export const formatearFecha = (fecha) => {
     const fechaNueva = new Date(fecha);
-    const options = {year: 'numeric', month: 'short', day: '2-digit'};
-    return fechaNueva.toLocaleDateString('es-ES', options);
+    const options = {day: '2-digit', year: 'numeric', month: 'short' };
+    
+    return fechaNueva.toLocaleDateString('en-GB', options);
 };
 

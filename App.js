@@ -1,6 +1,10 @@
 //import 'react-native-gesture-handler'
 import { StyleSheet, Text, View, Alert, Pressable, Image, Modal, ScrollView } from 'react-native';
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
+
+import {formatearFecha} from './helpers';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Header from './components/Header';
 import NuevoPresupuesto from './components/NuevoPresupuesto';
@@ -18,6 +22,157 @@ export default function App() {
 
   const [filtro, setFiltro] = useState('');
   const [gastosFiltrados, setGastosFiltrados] = useState([]);
+
+  //aqui lee el storage
+  useEffect(()=>{
+    // const obtenerPresupuesto = async () => {
+    //   try {
+    //     const presupuestoStorage = await AsyncStorage.getItem('planificador_presupuesto') ?? 0;
+    //     console.log('GetItempresupuestoStorage:',presupuestoStorage);
+    //     if(presupuestoStorage > 0){
+    //       setPresupuesto(presupuestoStorage);
+    //       setIsValidPresupuesto(true);
+    //     }
+        
+    //   } catch (error) {
+    //     console.log('error:', error);
+    //   }
+    //   //console.log('Obtnerpresupuesto:', presupuestoStorage);
+    // }
+    // obtenerPresupuesto();
+
+
+    const obtenerFIREBASE = async () => {
+      try {
+        const response = await fetch('https://planificador-42b7b-default-rtdb.firebaseio.com/presupuesto.json');
+        const respuesta = await response.json();
+        console.log('respuestaFIRE:',Object.values(respuesta) );
+        console.log('prueba_FIREBASE:', respuesta.presupuesto);
+        
+        const presupuestoStorage = respuesta.presupuesto;
+        if(presupuestoStorage > 0){
+          setPresupuesto(presupuestoStorage);
+          setIsValidPresupuesto(true);
+        }
+        // const prueba = Object.values(respuesta);
+        // console.log('prueba_FIREBASE:', respuesta.presupuesto); //HAY QUE JUGAR CON EL ARBOL QUE SE GENERA EN FIREBASE
+      } catch (error) {
+        console.log('errorRespuestaFire:', error);
+      }
+    }
+    obtenerFIREBASE();
+
+
+
+  },[]);
+
+  // aqui se almacena el presupuesto
+  useEffect(()=>{
+    // if(isValidPresupuesto){
+    //   const guardarPresupuesto = async () => {
+    //     try {
+    //       await AsyncStorage.setItem('planificador_presupuesto', presupuesto);
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   }
+    //   console.log('guardadoStorage:', presupuesto);
+    //   guardarPresupuesto();
+    // };
+
+    if (isValidPresupuesto){
+      const guardarFIREBASE = async() => {
+        try {
+          const response = await fetch ('https://planificador-42b7b-default-rtdb.firebaseio.com/presupuesto.json', {
+            method: 'PUT',   //cambiar al metodo PUT para que reemplace el existente
+            headers:{
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              presupuesto: presupuesto,
+              fecha: formatearFecha(Date.now()),
+            }),
+          });
+
+            const respuesta = await response.json();
+            console.log('respuesta:', respuesta);
+          } catch (error) {
+            console.log(error);
+        }
+      }
+      guardarFIREBASE();
+    };
+    } ,[isValidPresupuesto]);
+
+    //obtiene los gastos
+
+
+    useEffect(()=>{
+      // const obtenerGastos = async () =>{
+      //   try {
+      //     const gastosStorage = await AsyncStorage.getItem('planificador_gastos');
+          
+      //     setGastos(gastosStorage ? JSON.parse(gastosStorage) : []);
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      // }
+      // obtenerGastos();
+
+      const obtenerFIREBASE = async () => {
+        try {
+          const response = await fetch('https://planificador-42b7b-default-rtdb.firebaseio.com/gastos.json');
+          const respuesta = await response.json();
+          console.log('___respuestaFIRE_GASTOS:',(respuesta.gastos) );
+          console.log('___respuestaFIRE_GASTOS',(respuesta.gastos) );
+          setGastos(respuesta.gastos? respuesta.gastos : []);
+          console.log('FIREBASEgastos',gastos)
+          // const gastosStorage = Object.values(respuesta.gastos);
+          // console.log('___repsuesta.keys:',Object.values(respuesta.gastos))
+          // setGastos(gastosStorage ? JSON.parse(gastosStorage) : []);
+          
+        } catch (error) {
+          console.log('errorRespuestaFire:', error);
+        }
+      }
+      obtenerFIREBASE();
+
+    },[])
+
+    //almacena los gastos
+    useEffect(()=>{
+      // const guardarDatosStorage = async () => {
+      //   try {
+      //     await AsyncStorage.setItem('planificador_gastos', JSON.stringify(gastos));
+      //   } catch (error){
+      //     console.log(error);
+      //   }
+      // }
+      // guardarDatosStorage();
+
+
+      const guardarFIREBASE = async () => {
+        try {
+          const response = await fetch ('https://planificador-42b7b-default-rtdb.firebaseio.com/gastos.json', {
+            method: 'PUT',
+            headers:{
+              'Content-Type': 'application/json'
+          },
+            body: JSON.stringify({
+              gastos: gastos,
+              fecha: formatearFecha(Date.now()),
+            })
+        })
+
+        const respuesta = await response.json();
+
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      guardarFIREBASE();
+
+    },[gastos]);
 
 
   const handlePresupuesto = (presupuesto) => {  
@@ -75,6 +230,23 @@ export default function App() {
       )
     console.log('elimiando gasto:', id);
   };
+
+  const handleReset = () => {
+    Alert.alert(
+      'Resetear todos los valores',
+       '¿Continuar?',
+        [{text: 'No', style: 'cancel'}, {text: 'Si, eliminar', onPress: async () => {
+          try {
+            await AsyncStorage.clear();
+            setIsValidPresupuesto(false);
+            setPresupuesto(0);
+            setGastos([]);
+          } catch (error) {
+            console.log(error);
+          }
+
+    }}])
+  }
     
   return (
     <View style={styles.container}>
@@ -84,7 +256,8 @@ export default function App() {
         {isValidPresupuesto ? 
         <ControlPresupuesto
         gastos = {gastos} 
-        presupuesto= {presupuesto}/> :
+        presupuesto= {presupuesto}
+        handleReset={handleReset}/> :
          <NuevoPresupuesto 
          presupuesto= {presupuesto}
          setPresupuesto ={setPresupuesto}
@@ -95,7 +268,7 @@ export default function App() {
       {isValidPresupuesto && (
       <>
       <Filtro filtro={filtro} setFiltro={setFiltro} gastos={gastos} setGastosFiltrados={setGastosFiltrados}/>
-      <ListaGastos gastos={gastos} setModal={setModal} setGasto={setGasto}/>
+      <ListaGastos gastos={gastos} setModal={setModal} setGasto={setGasto} filtro={filtro} gastosFiltrados={gastosFiltrados}/>
       </>
       )}
 

@@ -47,7 +47,7 @@ const ItemGasto = ({gasto, setModal, setGasto}) => {
 const styles = StyleSheet.create({
     container:{
         ...globalStyles.container,
-        marginBottom: 10,
+        marginVertical: '2%',
     },
     contenido:{
         flexDirection: 'row',
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     imagen:{
         width: 50,
         height: 50,
-        marginRight: 10,
+        marginHorizontal: '4%',
     },
     contenedorTexto:{
         // backgroundColor: '#f5f5f5',
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     cantidad:{
         fontSize: 20,
         fontWeight: 'bold',
+        marginHorizontal: '4%',
     },
     fecha:{
         fontWeight: 'bold',

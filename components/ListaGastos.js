@@ -3,24 +3,33 @@ import { StyleSheet, Text, View, Alert, Pressable, Image, Modal } from 'react-na
 
 import ItemGasto from './ItemGasto';
 
-const ListaGastos = ({gastos, setModal, setGasto}) => {
+const ListaGastos = ({gastos, setModal, setGasto, filtro, gastosFiltrados}) => {
   return (
         <View style={styles.container}>
 
             <Text style={styles.title}>Lista Gastos</Text>
 
-            {gastos.length === 0 ?
+            {filtro? gastosFiltrados.map(gasto =>(
+                <ItemGasto key={gasto.id} gasto={gasto} setModal={setModal} setGasto={setGasto}/>
+            )): gastos.map(gasto =>(
+                <ItemGasto key={gasto.id} gasto={gasto} setModal={setModal} setGasto={setGasto}/>
+            ))}
+
+           {gastos.length === 0 || (gastosFiltrados.length ===0 && !!filtro) && <Text style= {styles.noGastosTxt}>No hay gastos</Text>}
+           
+           
+            {/* {gastos.length === 0 ?
              <Text style= {styles.noGastosTxt}>No hay gastos</Text> :
               gastos.map(gasto => (
                 <ItemGasto key={gasto.id} gasto={gasto} setModal={setModal} setGasto={setGasto}/>
-            ))}
+            ))} */}
         </View>
   );
 };
 
 const styles = StyleSheet.create({
     container:{
-        marginTop: 70,
+        marginVertical: 60,
     },
     title:{
         color: '#64748B',

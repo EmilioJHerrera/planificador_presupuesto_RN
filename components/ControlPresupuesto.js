@@ -7,7 +7,7 @@ import { formatearNumero } from '../helpers';
 import CircularProgress from 'react-native-circular-progress-indicator';
 
 
-const ControlPresupuesto = ({presupuesto,gastos}) => {
+const ControlPresupuesto = ({presupuesto,gastos, handleReset}) => {
 
     const [disponible, setDisponible] = useState(0);
     const [gastado, setGastado] = useState(0);
@@ -58,7 +58,11 @@ const ControlPresupuesto = ({presupuesto,gastos}) => {
                     <Text style={styles.label}>Gastado:{' '}</Text>{gastado}
                 </Text>       
                 
+                <Pressable style={styles.boton} onLongPress={()=>handleReset()}>
+                    <Text style={styles.botonLabel}>Reiniciar App</Text>
+                </Pressable>
             </View>
+
 
         </View>
   );
@@ -86,6 +90,18 @@ const styles = StyleSheet.create({
         label:{
             fontWeight: 'bold',
             color: '#3b82f6',
+        },
+        boton:{
+            backgroundColor: 'red',
+            padding: '2%',
+            borderRadius: 10,
+            marginHorizontal: '10%',
+        },
+        botonLabel:{
+            color: '#fff',
+            fontSize: 20,
+            textAlign: 'center',
+            textTransform: 'uppercase',
         },
     });
 export default ControlPresupuesto;
