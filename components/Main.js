@@ -20,6 +20,40 @@ const Main = () => {
     const [filtro, setFiltro] = useState('');
     const [gastosFiltrados, setGastosFiltrados] = useState([]);
   
+    useEffect(()=>{
+      // const obtenerGastos = async () =>{
+      //   try {
+      //     const gastosStorage = await AsyncStorage.getItem('planificador_gastos');
+          
+      //     setGastos(gastosStorage ? JSON.parse(gastosStorage) : []);
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      // }
+      // obtenerGastos();
+
+      const obtenerFIREBASE = async () => {
+        try {
+          const response = await fetch('https://planificador-42b7b-default-rtdb.firebaseio.com/gastos.json');
+          const respuesta = await response.json();
+          console.log('___respuestaFIRE_GASTOS:',(respuesta.gastos) );
+          console.log('___respuestaFIRE_GASTOS',(respuesta.gastos) );
+          setGastos(respuesta.gastos? respuesta.gastos : []);
+          console.log('FIREBASEgastos',gastos)
+          // const gastosStorage = Object.values(respuesta.gastos);
+          // console.log('___repsuesta.keys:',Object.values(respuesta.gastos))
+          // setGastos(gastosStorage ? JSON.parse(gastosStorage) : []);
+          
+        } catch (error) {
+          console.log('errorRespuestaFire:', error);
+        }
+      }
+      obtenerFIREBASE();
+
+    },[])
+    
+    
+    
     //aqui lee el storage
     useEffect(()=>{
       // const obtenerPresupuesto = async () => {
@@ -104,37 +138,7 @@ const Main = () => {
       //obtiene los gastos
   
   
-      useEffect(()=>{
-        // const obtenerGastos = async () =>{
-        //   try {
-        //     const gastosStorage = await AsyncStorage.getItem('planificador_gastos');
-            
-        //     setGastos(gastosStorage ? JSON.parse(gastosStorage) : []);
-        //   } catch (error) {
-        //     console.log(error);
-        //   }
-        // }
-        // obtenerGastos();
-  
-        const obtenerFIREBASE = async () => {
-          try {
-            const response = await fetch('https://planificador-42b7b-default-rtdb.firebaseio.com/gastos.json');
-            const respuesta = await response.json();
-            console.log('___respuestaFIRE_GASTOS:',(respuesta.gastos) );
-            console.log('___respuestaFIRE_GASTOS',(respuesta.gastos) );
-            setGastos(respuesta.gastos? respuesta.gastos : []);
-            console.log('FIREBASEgastos',gastos)
-            // const gastosStorage = Object.values(respuesta.gastos);
-            // console.log('___repsuesta.keys:',Object.values(respuesta.gastos))
-            // setGastos(gastosStorage ? JSON.parse(gastosStorage) : []);
-            
-          } catch (error) {
-            console.log('errorRespuestaFire:', error);
-          }
-        }
-        obtenerFIREBASE();
-  
-      },[])
+      
   
       //almacena los gastos
       useEffect(()=>{
@@ -167,7 +171,9 @@ const Main = () => {
             console.log(error);
           }
         }
+      //        if(gastos.length > 0){
         guardarFIREBASE();
+      //  }
   
       },[gastos]);
   
@@ -238,6 +244,11 @@ const Main = () => {
               setIsValidPresupuesto(false);
               setPresupuesto(0);
               setGastos([]);
+
+//borrar todos los gastos de firebase
+
+
+
             } catch (error) {
               console.log(error);
             }
